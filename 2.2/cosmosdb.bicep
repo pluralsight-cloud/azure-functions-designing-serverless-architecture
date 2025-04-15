@@ -1,6 +1,5 @@
 /********************************************************************************
     Bicep file:
-     - A Storage Account
      - A Basic (B1) App Service Plan
      - Application Insights
      - A C# Function App
@@ -11,21 +10,10 @@
 var location = resourceGroup().location
 
 // Names for Azure resources changed from param to var
-var storageAccountName = 'st${uniqueString(resourceGroup().id)}'
 var appServicePlanName = 'asp${uniqueString(resourceGroup().id)}'
 var functionAppName = 'func${uniqueString(resourceGroup().id)}'
 var applicationInsightsName = 'app${uniqueString(resourceGroup().id)}'
 var cosmosAccountName = 'cosmos${uniqueString(resourceGroup().id)}'
-
-// Create a storage account
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'StorageV2'
-}
 
 // Create the App Service Plan (Basic B1)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -69,10 +57,6 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet'
-        }
-        {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(storageAccount.id, '2022-05-01').keys[0].value};EndpointSuffix=core.windows.net'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
